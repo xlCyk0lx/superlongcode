@@ -89,49 +89,39 @@
     </div>
 
     <script>
-        function updatePlayerList(data) {
-            const playerList = document.getElementById('players');
-            const currentPlayers = document.getElementById('current-players');
-            const lastUpdate = document.getElementById('last-update');
-            const errorMessage = document.getElementById('error-message');
-            
-            if (!data || !data.players) {
-                errorMessage.style.display = 'block';
-                playerList.style.display = 'none';
-                return;
-            }
-
-            errorMessage.style.display = 'none';
-            playerList.style.display = 'grid';
-            
-            playerList.innerHTML = '';
-            currentPlayers.textContent = data.players.length;
-            
-            data.players.forEach(player => {
-                const playerCard = document.createElement('div');
-                playerCard.className = 'player-card';
-                playerCard.textContent = player;
-                playerList.appendChild(playerCard);
-            });
-
-            lastUpdate.textContent = new Date().toLocaleTimeString();
-        }
-
-        function fetchData() {
-            fetch('/api/players')
+        function updatePlayerList() {
+            fetch('https://api.jsonbin.io/v3/b/6738fa18ad19ca34f8cb2f02/latest')
                 .then(response => response.json())
-                .then(data => updatePlayerList(data))
-                .catch(() => {
-                    document.getElementById('error-message').style.display = 'block';
-                    document.getElementById('players').style.display = 'none';
+                .then(data => {
+                    const playerList = document.getElementById('players');
+                    const currentPlayers = document.getElementById('current-players');
+                    const errorMessage = document.getElementById('error-message');
+                    const lastUpdate = document.getElementById('last-update');
+                    
+                    if (data && data.record.players) {
+                        errorMessage.style.display = 'none';
+                        playerList.style.display = 'grid';
+                        
+                        playerList.innerHTML = '';
+                        currentPlayers.textContent = data.record.players.length;
+                        
+                        data.record.players.forEach(player => {
+                            const playerCard = document.createElement('div');
+                            playerCard.className = 'player-card';
+                            playerCard.textContent = player;
+                            playerList.appendChild(playerCard);
+                        });
+
+                        lastUpdate.textContent = new Date().toLocaleTimeString();
+                    }
                 });
         }
 
         // Update every 30 seconds
-        setInterval(fetchData, 30000);
+        setInterval(updatePlayerList, 30000);
 
         // Initial load
-        fetchData();
+        updatePlayerList();
     </script>
 </body>
 </html>
