@@ -90,15 +90,17 @@
 
     <script>
         function updatePlayerList() {
+            console.log('Fetching data from JSONBin...'); // Debug line
             fetch('https://api.jsonbin.io/v3/b/6738fa18ad19ca34f8cb2f02/latest')
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Received data:', data); // Debug line
                     const playerList = document.getElementById('players');
                     const currentPlayers = document.getElementById('current-players');
                     const errorMessage = document.getElementById('error-message');
                     const lastUpdate = document.getElementById('last-update');
                     
-                    if (data && data.record.players) {
+                    if (data && data.record && data.record.players && Array.isArray(data.record.players)) {
                         errorMessage.style.display = 'none';
                         playerList.style.display = 'grid';
                         
@@ -113,6 +115,9 @@
                         });
 
                         lastUpdate.textContent = new Date().toLocaleTimeString();
+                    } else {
+                        errorMessage.style.display = 'block';
+                        playerList.style.display = 'none';
                     }
                 });
         }
@@ -125,3 +130,5 @@
     </script>
 </body>
 </html>
+
+index.html
